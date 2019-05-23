@@ -3,7 +3,7 @@
 import argparse
 import os
 import multiprocessing
-
+import matlab.engine
 
 def main():
     argparser = argparse.ArgumentParser(description='Run SPM12 neuromorphometric pipeline')
@@ -11,7 +11,7 @@ def main():
     args = argparser.parse_args()
 
     subjects_list = gen_subjects_list(args.input_folder)
-    pool = multiprocessing.Pool()
+    pool = multiprocessing.Pool(min(4, multiprocessing.cpu_count()))  # Temporarily limit to 4
     print(pool.map(run_nmp, subjects_list))
 
 
@@ -20,8 +20,9 @@ def gen_subjects_list(root_folder):
 
 
 def run_nmp(subject_id):
-    print "processing subject " + subject_id
-    return "Completed"
+    print "Starting preprocessing for subject " + subject_id
+    eng = matlab.engine.start_matlab()
+    return eng.isprime(37)
 
 
 if __name__ == "__main__":
