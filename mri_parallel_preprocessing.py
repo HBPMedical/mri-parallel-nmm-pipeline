@@ -5,24 +5,42 @@ import os
 import multiprocessing
 import matlab.engine
 
+
+NMP_TEMPLATE = 'TPM.nii'
+OUTPUT_FORMAT = 'csv'
+SPM12_PATH = '/opt/spm12'
+NMP_PATH = '/home/barinjaka/mri-preprocessing-pipeline'  # TODO: get rid of this shit !!!
+
+
 def main():
     argparser = argparse.ArgumentParser(description='Run SPM12 neuromorphometric pipeline')
     argparser.add_argument('input_folder')
+    argparser.add_argument('output_folder')
+    argparser.add_argument('proto_def_file')
     args = argparser.parse_args()
 
-    subjects_list = gen_subjects_list(args.input_folder)
+    subjects = gen_subjects_list(args.input_folder)
     pool = multiprocessing.Pool(min(4, multiprocessing.cpu_count()))  # Temporarily limit to 4
-    print(pool.map(run_nmp, subjects_list))
+    cmd_list = prepare_cmd_list(subjects, args.input_folder, args.output_folder, args.proto_def_file)
+    print(pool.map(run_matlab_cmd, cmd_list))
 
 
 def gen_subjects_list(root_folder):
     return os.listdir(root_folder)
 
 
-def run_nmp(subject_id):
-    print "Starting preprocessing for subject " + subject_id
+def prepare_cmd_list(subjects, input_folder, output_folder, proto_def_file, output_format=OUTPUT_FORMAT, nmp_template=NMP_TEMPLATE):
+    pre = "NeuroMorphometric_pipeline('"
+    post = "','" + input_folder + "','"+output_folder+"','','"+proto_def_file+"','"+output_format+"','"+nmp_template+"')"
+    return [pre + s + post for s in subjects]
+
+
+def run_matlab_cmd(matlab_cmd):
+    print "Running : " + matlab_cmd
     eng = matlab.engine.start_matlab()
-    return eng.isprime(37)
+    eng.eval("addpath(genpath('"+SPM12_PATH+"'))")
+    eng.eval("addpath(genpath('"+NMP_PATH+"'))")
+    return eng.eval(matlab_cmd)
 
 
 if __name__ == "__main__":
