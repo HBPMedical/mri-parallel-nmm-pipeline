@@ -56,7 +56,7 @@ def run_matlab_cmd(matlab_cmd):
         ret = eng.eval(matlab_cmd)
         logging.info("Successfully ran: " + matlab_cmd)
     except matlab.engine.MatlabExecutionError as e:
-        logging.warning("Failed running " + matlab_cmd + ": " + e)
+        logging.warning("Failed running " + matlab_cmd + ": " + str(e))
         ret = None
     return ret
 
