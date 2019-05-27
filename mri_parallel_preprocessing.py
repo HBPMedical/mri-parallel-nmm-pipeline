@@ -11,16 +11,17 @@ NMP_TEMPLATE = 'TPM.nii'
 OUTPUT_FORMAT = 'csv'
 SPM12_PATH = '/opt/spm12'
 NMP_PATH = '/home/barinjaka/mri-preprocessing-pipeline'  # TODO: get rid of this shit !!!
+LOG_FILE = 'mri_pipeline.log'
 
 
 def main():
-    logging.basicConfig(level=logging.INFO)
-
     argparser = argparse.ArgumentParser(description='Run SPM12 neuromorphometric pipeline')
     argparser.add_argument('input_folder')
     argparser.add_argument('output_folder')
     argparser.add_argument('proto_def_file')
     args = argparser.parse_args()
+
+    logging.basicConfig(level=logging.INFO, filename=os.path.join(args.output_folder, LOG_FILE))
 
     subjects = gen_subjects_list(args.input_folder)
     pool = multiprocessing.Pool(min(4, multiprocessing.cpu_count()))  # Temporarily limit to 4
