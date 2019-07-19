@@ -1,0 +1,3 @@
+[submodule "mri-preprocessing-pipeline"]
+	path = mri-preprocessing-pipeline
+	url = https://github.com/HBPMedical/mri-preprocessing-pipeline.git

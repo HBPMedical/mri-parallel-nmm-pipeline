@@ -1,8 +1,8 @@
-# MRI parallel pre-processing pipeline
+# MRI parallel neuromorphometric pipeline
 
-## What's that ?
+## Introduction
 
-Wrapper to run the SPM12 neuromorphometric pipeline in parallel over multiple subjects
+The MRI parallel neuromorphometric pipeline is a wrapper to run the SPM12 neuromorphometric pipeline in parallel over multiple CPU cores.
 
 
 ## Prerequisites
@@ -14,7 +14,13 @@ Wrapper to run the SPM12 neuromorphometric pipeline in parallel over multiple su
 * The input folder must contain nifti files organized according to the following directory tree: subject/visit/protocol/repetition/
 * All protocol names must be listed in the <proto_def_file> (pipeline documentation)
 
+
+## Installation
+
+Run: `git clone --recursive https://github.com/HBPMedical/mri-parallel-nmm-pipeline.git`
+
+
 ## Usage
 
-Run `./mri_parallel_prepricessing.py <input_folder> <output_folder> <proto_def_file>`
+Run (from the project directory): `./mri_parallel_prepricessing.py <input_folder> <output_folder>`
 
