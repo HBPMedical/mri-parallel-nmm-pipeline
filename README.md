@@ -17,9 +17,9 @@ The MRI parallel neuromorphometric pipeline is a wrapper to run the SPM12 neurom
 
 ## Installation
 
-Run: `git clone --recursive https://github.com/HBPMedical/mri-parallel-nmm-pipeline.git` or download the zipped source code at: https://github.com/HBPMedical/mri-parallel-nmm-pipeline/archive/master.zip
+Run: `git clone --recursive https://github.com/HBPMedical/mri-parallel-nmm-pipeline.git` (or download the zipped source code at: https://github.com/HBPMedical/mri-parallel-nmm-pipeline/archive/master.zip and retreive the git submodule if needed)
 
 
 ## Usage
 
-Run (from the project directory): `./mri_parallel_prepricessing.py <input_folder> <output_folder>`
+Run (from the project directory): `./mri_parallel_preprocessing.py <input_folder> <output_folder>`
