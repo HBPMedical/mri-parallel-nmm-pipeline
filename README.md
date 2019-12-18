@@ -7,7 +7,7 @@ The MRI parallel neuromorphometric pipeline is a wrapper to run the SPM12 neurom
 
 ## Prerequisites
 
-* Python 2.x (see: https://www.python.org/)
+* Python 3.6 (see: https://www.python.org/)
 * Matlab (see: https://ch.mathworks.com/products/matlab.html)
 * SPM12 deployed in /opt folder (see: https://www.fil.ion.ucl.ac.uk/spm/software/spm12/)
 * Matalb engine for Python must be installed (see: https://www.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html)

@@ -1,10 +1,12 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3.6
 
-import logging
+#import logging
+import io
 import argparse
 import os
 import sys
-import multiprocessing
+from multiprocessing import get_context
+from multiprocessing import cpu_count
 import matlab.engine
 
 
@@ -22,13 +24,15 @@ def main():
     argparser.add_argument('output_folder')
     args = argparser.parse_args()
 
-    logging.basicConfig(level=logging.INFO, filename=os.path.join(args.output_folder, LOG_FILE))
+    #logging.basicConfig(level=logging.INFO, filename=os.path.join(args.output_folder, LOG_FILE))
 
     subjects = gen_subjects_list(args.input_folder)
-    pool = multiprocessing.Pool(min(4, multiprocessing.cpu_count()))  # Temporarily limit to 4
+    
+    my_pool = get_context("spawn").Pool(min(4, cpu_count()))  # Temporarily limit to 4
     cmd_list = prepare_cmd_list(subjects, args.input_folder, args.output_folder, PROTO_DEF_FILE)
-    pool.map(run_matlab_cmd, cmd_list)
-    logging.info("Completed")
+    my_pool.map(run_matlab_cmd, cmd_list)
+    
+    #logging.info("Completed")
 
 
 def gen_subjects_list(root_folder):
@@ -50,16 +54,21 @@ def prepare_cmd_list(
 
 
 def run_matlab_cmd(matlab_cmd):
-    logging.info("Running : " + matlab_cmd)
+    #logging.info("Running : " + matlab_cmd)
     try:
-        eng = matlab.engine.start_matlab()
-        eng.eval("addpath(genpath('"+SPM12_PATH+"'))")
-        eng.eval("addpath(genpath('"+NMP_PATH+"'))")
-        ret = eng.eval(matlab_cmd)
-        logging.info("Successfully ran: " + matlab_cmd)
+        future = matlab.engine.start_matlab(background=True)
+        eng = future.result()
+        out = io.StringIO()
+        err = io.StringIO()
+        eng.eval("addpath(genpath('"+SPM12_PATH+"'))", stdout=out, stderr=err)
+        eng.eval("addpath(genpath('"+NMP_PATH+"'))", stdout=out, stderr=err)
+        ret = eng.eval(matlab_cmd, stdout=out, stderr=err)
+        #logging.info("Successfully ran: " + matlab_cmd)
     except matlab.engine.MatlabExecutionError as e:
-        logging.warning("Failed running " + matlab_cmd + ": " + str(e))
+        #logging.warning("Failed running " + matlab_cmd + ": " + str(e))
         ret = None
+    finally:
+        eng.quit()
     return ret
 
 
