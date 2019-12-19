@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.6
 
-#import logging
+import logging
 import io
 import argparse
 import os
@@ -24,15 +24,15 @@ def main():
     argparser.add_argument('output_folder')
     args = argparser.parse_args()
 
-    #logging.basicConfig(level=logging.INFO, filename=os.path.join(args.output_folder, LOG_FILE))
+    logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO, filename=os.path.join(args.output_folder, LOG_FILE))
 
     subjects = gen_subjects_list(args.input_folder)
     
-    my_pool = get_context("spawn").Pool(min(4, cpu_count()))  # Temporarily limit to 4
+    my_pool = get_context("spawn").Pool(cpu_count())
     cmd_list = prepare_cmd_list(subjects, args.input_folder, args.output_folder, PROTO_DEF_FILE)
     my_pool.map(run_matlab_cmd, cmd_list)
     
-    #logging.info("Completed")
+    logging.info("Completed")
 
 
 def gen_subjects_list(root_folder):
@@ -54,7 +54,7 @@ def prepare_cmd_list(
 
 
 def run_matlab_cmd(matlab_cmd):
-    #logging.info("Running : " + matlab_cmd)
+    logging.info("Running : " + matlab_cmd)
     try:
         future = matlab.engine.start_matlab(background=True)
         eng = future.result()
@@ -63,9 +63,9 @@ def run_matlab_cmd(matlab_cmd):
         eng.eval("addpath(genpath('"+SPM12_PATH+"'))", stdout=out, stderr=err)
         eng.eval("addpath(genpath('"+NMP_PATH+"'))", stdout=out, stderr=err)
         ret = eng.eval(matlab_cmd, stdout=out, stderr=err)
-        #logging.info("Successfully ran: " + matlab_cmd)
-    except matlab.engine.MatlabExecutionError as e:
-        #logging.warning("Failed running " + matlab_cmd + ": " + str(e))
+        logging.info("Successfully ran: " + matlab_cmd)
+    except:
+        logging.warning("Failed running {0} : {1}".format(matlab_cmd, sys.exc_info()[0]))
         ret = None
     finally:
         eng.quit()
