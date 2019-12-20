@@ -27,11 +27,11 @@ def main():
     logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO, filename=os.path.join(args.output_folder, LOG_FILE))
 
     subjects = gen_subjects_list(args.input_folder)
-    
     my_pool = get_context("spawn").Pool(min(6, cpu_count()))  # temporarily limit to 6 cores
     cmd_list = prepare_cmd_list(subjects, args.input_folder, args.output_folder, PROTO_DEF_FILE)
+
+    logging.info("Starting processing...")
     my_pool.map(run_matlab_cmd, cmd_list)
-    
     logging.info("Completed")
 
 
@@ -68,6 +68,8 @@ def run_matlab_cmd(matlab_cmd):
         logging.warning("Failed running {0} : {1}".format(matlab_cmd, str(e)))
         ret = None
     finally:
+        out.close()
+        err.close()
         eng.quit()
     return ret
 
