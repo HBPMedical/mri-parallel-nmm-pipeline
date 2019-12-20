@@ -28,7 +28,7 @@ def main():
 
     subjects = gen_subjects_list(args.input_folder)
     
-    my_pool = get_context("spawn").Pool(cpu_count())
+    my_pool = get_context("spawn").Pool(min(6, cpu_count()))  # temporarily limit to 6 cores
     cmd_list = prepare_cmd_list(subjects, args.input_folder, args.output_folder, PROTO_DEF_FILE)
     my_pool.map(run_matlab_cmd, cmd_list)
     
@@ -64,8 +64,8 @@ def run_matlab_cmd(matlab_cmd):
         eng.eval("addpath(genpath('"+NMP_PATH+"'))", stdout=out, stderr=err)
         ret = eng.eval(matlab_cmd, stdout=out, stderr=err)
         logging.info("Successfully ran: " + matlab_cmd)
-    except:
-        logging.warning("Failed running {0} : {1}".format(matlab_cmd, sys.exc_info()[0]))
+    except Exception as e:
+        logging.warning("Failed running {0} : {1}".format(matlab_cmd, str(e)))
         ret = None
     finally:
         eng.quit()
