@@ -64,13 +64,13 @@ def run_matlab_cmd(matlab_cmd):
         eng.eval("addpath(genpath('"+NMP_PATH+"'))", stdout=out, stderr=err)
         ret = eng.eval(matlab_cmd, stdout=out, stderr=err)
         logging.info("Successfully ran: " + matlab_cmd)
+        eng.quit()
     except Exception as e:
         logging.warning("Failed running {0} : {1}".format(matlab_cmd, str(e)))
         ret = None
     finally:
         out.close()
         err.close()
-        eng.quit()
     return ret
 
 
