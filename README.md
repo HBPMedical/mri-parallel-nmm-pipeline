@@ -23,3 +23,9 @@ Run: `git clone --recursive https://github.com/HBPMedical/mri-parallel-nmm-pipel
 ## Usage
 
 Run (from the project directory): `./mri_parallel_preprocessing.py <input_folder> <output_folder>`
+
+
+## LICENSE & COPYRIGHT
+
+This project makes use of another project, referenced as a Git submodule.
+Please look at that submodule repository for its license, its copyright and further information.
